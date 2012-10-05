@@ -1,7 +1,10 @@
 # Useful I/O functions for the Beagle Bone
-from MuxSettings import MuxSettings
 
 from time import sleep
+from getpass import getuser
+from subprocess import check_output
+
+from MuxSettings import MuxSettings
 
 MUX_FOLDER = "/sys/kernel/debug/omap_mux/"
 GPIO_FOLDER = "/sys/class/gpio/"
@@ -27,7 +30,12 @@ LED_FILES[2] = "beaglebone::usr2/brightness"
 LED_FILES[3] = "beaglebone::usr3/brightness"
 
 AIN = {}
+AIN[1] = "ain1"
 AIN[2] = "ain2"
+AIN[3] = "ain3"
+AIN[4] = "ain4"
+AIN[5] = "ain5"
+AIN[6] = "ain6"
 AIN_DIRECTORY = "/sys/devices/platform/omap/tsc/"
 
 def get_number(port, number):
@@ -38,29 +46,29 @@ def get_number(port, number):
     io = 32 * port + number
     return io
 
-def checkIo(io):
+def check_io(io):
     """
         Checks that an io port has been muxed and therefore is usable
     """
     return io in MUX.keys()
 
-def checkAin(io):
+def check_ain(io):
     """
         Checks that an ADC is known about and has therefore had it perms set
     """
     return io in AIN.keys()
 
-def checkLed(led):
+def check_led(led):
     """
         Checks to make sure you aren't trying to turn on a non existent LED
     """
     return led in LED_FILES.keys()
 
-def ledOff(led):
+def led_off(led):
     """
         Turns one of the LEDs to the right of the RJ45 off
     """
-    if checkLed(led):
+    if check_led(led):
         try:
             filename = LED_DIRECTORY + LED_FILES[led]
             f = open(filename, "w")
@@ -71,11 +79,11 @@ def ledOff(led):
     else:
         print "Invalid LED number"
 
-def ledOn(led):
+def led_on(led):
     """
         Turns one of the LEDs to the right of the RJ45 on
     """
-    if checkLed(led):
+    if check_led(led):
         try:
             filename = LED_DIRECTORY + LED_FILES[led]
             f = open(filename, "w")
@@ -88,6 +96,9 @@ def ledOn(led):
 
 
 def on(io):
+    """
+        Turns on a gpio pin
+    """
     fname = GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
     try:
         f = open(fname, "w")
@@ -97,6 +108,9 @@ def on(io):
         print("File does not exist.  Has IO %d been enabled?" % io)
 
 def off(io):
+    """
+        Turns off a gpio pin
+    """
     fname = GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
     try:
         f = open(fname, "w")
@@ -105,7 +119,10 @@ def off(io):
     except IOError:
         print("File does not exist.  Has IO %d been enabled" % io)
 
-def getAdc(io):
+def get_adc(io):
+    """
+        Gets the value from and adc, converts it to an int and returns it
+    """
     fname = AIN_DIRECTORY + AIN[io]
     try:
         f = open(fname, "r")
@@ -120,15 +137,36 @@ def getAdc(io):
  Functions from here on are todo with the initialisation of the system
  and so shouldn't need to be called as part of the practical
 """
-def setupMux(io):
+def _setup_mux(io):
     filename = MUX_FOLDER + MUX[io].fname
     f = open(filename, "w")
     f.write("%d" % MUX[io].mux)
     f.close()
 
-def enableIo(io):
+def _enable_io(io):
     fname = GPIO_FOLDER + ENABLE_FILE
     f = open(fname, "w")
     f.write("%d" % io)
     sleep(0.5)
     f.close()
+
+def _install_analog_driver():
+    """
+        Installs the kernal module required for the analog stuff to work
+    """    
+    check_output("modprobe ti_tscadc", shell=True)
+
+def _check_root():
+    """
+        Checks to make sure that the script is being run by root,
+        required as only root can make the changes needed to setup
+    """
+    return getuser() == "root"
+
+def setup():
+    if not _check_root():
+        raise Exception("Not root so cannot continue")
+
+if __name__ == "__main__":
+    setup()
+
