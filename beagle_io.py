@@ -1,10 +1,10 @@
+#!/usr/bin/env python
+
 # Useful I/O functions for the Beagle Bone
 
-from time import sleep
 from getpass import getuser
 from subprocess import check_output
 
-from MuxSettings import MuxSettings
 
 MUX_FOLDER = "/sys/kernel/debug/omap_mux/"
 GPIO_FOLDER = "/sys/class/gpio/"
@@ -12,13 +12,13 @@ ENABLE_FILE = "export"
 DIRECTION_FILE = "direction"
 
 MUX = {}
-MUX[32] = MuxSettings("gpmc_ad0", 7)
-MUX[33] = MuxSettings("gpmc_ad1", 7)
-MUX[34] = MuxSettings("gpmc_ad2", 7)
-#MUX[35] = MuxSettings("gpmc_ad3", 7)
+MUX[32] = ("gpmc_ad0", 7)
+MUX[33] = ("gpmc_ad1", 7)
+MUX[34] = ("gpmc_ad2", 7)
+#MUX[35] =("gpmc_ad3", 7)
 #commented out as it seems to fail at the mo :(
-MUX[38] = MuxSettings("gpmc_ad6", 7)
-MUX[39] = MuxSettings("gpmc_ad7", 7)
+MUX[38] = ("gpmc_ad6", 7)
+MUX[39] = ("gpmc_ad7", 7)
 
 LED_DIRECTORY = "/sys/devices/platform/leds-gpio/leds/"
 
@@ -133,21 +133,28 @@ def get_adc(io):
     except IOError:
         print("File does not exist.  Has IO %d been enabled" % io)
 
-"""
- Functions from here on are todo with the initialisation of the system
- and so shouldn't need to be called as part of the practical
-"""
+
+#  Functions from here on are todo with the initialisation of the system
+#  and so shouldn't need to be called as part of the practical
+
 def _setup_mux(io):
-    filename = MUX_FOLDER + MUX[io].fname
+    """
+        Sets up the mux values as needed for the IO stuff    
+    """
+    fname, mux = MUX[io]
+    filename = MUX_FOLDER + fname
     f = open(filename, "w")
-    f.write("%d" % MUX[io].mux)
+    f.write("%d" % mux)
     f.close()
 
+
 def _enable_io(io):
+    """
+        Enables the driver for a specific IO
+    """
     fname = GPIO_FOLDER + ENABLE_FILE
     f = open(fname, "w")
     f.write("%d" % io)
-    sleep(0.5)
     f.close()
 
 def _install_analog_driver():
@@ -163,10 +170,18 @@ def _check_root():
     """
     return getuser() == "root"
 
-def setup():
-    if not _check_root():
-        raise Exception("Not root so cannot continue")
+def _setup():
+    try:
+        if not _check_root():
+            raise Exception("Not root so cannot continue")
+        _install_analog_driver()
+        for io in MUX:
+            _setup_mux(io)
+            _enable_io(io)
+        led_on(2) # Turn on LED as a sign it's succeded
+    except Exception:
+        print "For some reason the setup was not sucessful"
 
 if __name__ == "__main__":
-    setup()
+    _setup()
 
