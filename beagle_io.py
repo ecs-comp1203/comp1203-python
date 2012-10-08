@@ -75,9 +75,9 @@ def led_off(led):
             f.write("0")
             f.close()
         except IOError:
-            print "Unable to turn LED off"
+            raise Exception("Unable to turn off LED, please contact a demonstrator")
     else:
-        print "Invalid LED number"
+        raise Exception("unknown LED, are you sure you have the right number?")
 
 def led_on(led):
     """
@@ -90,39 +90,45 @@ def led_on(led):
             f.write("1")
             f.close()
         except IOError:
-            print "Unable to turn LED on"
+            raise Exception("Unable to turn on LED, please contact a demonstrator")
     else:
-        print "Invalid LED number"
-
+        raise Exception("unknown LED, are you sure you have the right number?")
 
 def on(io):
     """
         Turns on a gpio pin
     """
+    if not check_io(io):
+        raise Exception("The IO isn't enabled, you should be using a different one")
     fname = GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
     try:
         f = open(fname, "w")
         f.write("high")
         f.close()
     except IOError:
-        print("File does not exist.  Has IO %d been enabled?" % io)
+        raise Exception("Unable to toggle output, please contact a demonstrator")
+
 
 def off(io):
     """
         Turns off a gpio pin
     """
+    if not check_io(io):
+        raise Exception("The IO isn't enabled, you should be using a different one")
     fname = GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
     try:
         f = open(fname, "w")
         f.write("low")
         f.close()
     except IOError:
-        print("File does not exist.  Has IO %d been enabled" % io)
+        raise Exception("Unable to toggle output, please contact a demonstrator")
 
 def get_adc(io):
     """
         Gets the value from and adc, converts it to an int and returns it
     """
+    if not check_ain(io):
+        raise Exception("Unknown ADC, you should be using a different number")
     fname = AIN_DIRECTORY + AIN[io]
     try:
         f = open(fname, "r")
@@ -131,7 +137,7 @@ def get_adc(io):
         return int(reading)
 
     except IOError:
-        print("File does not exist.  Has IO %d been enabled" % io)
+        raise Exception("Unable to read ADC please contact a demonstrator")
 
 
 #  Functions from here on are todo with the initialisation of the system
@@ -171,16 +177,13 @@ def _check_root():
     return getuser() == "root"
 
 def _setup():
-    try:
-        if not _check_root():
-            raise Exception("Not root so cannot continue")
-        _install_analog_driver()
-        for io in MUX:
-            _setup_mux(io)
-            _enable_io(io)
-        led_on(2) # Turn on LED as a sign it's succeded
-    except Exception:
-        print "For some reason the setup was not sucessful"
+    if not _check_root():
+        raise Exception("Not root so cannot continue")
+    _install_analog_driver()
+    for io in MUX:
+        _setup_mux(io)
+        _enable_io(io)
+    led_on(2) # Turn on LED as a sign it's succeded
 
 if __name__ == "__main__":
     _setup()
