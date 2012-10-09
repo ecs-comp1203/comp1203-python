@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-
-# Useful I/O functions for the Beagle Bone
+"""
+    Provides an easy to use python interface to all the beagle io/adc stuff
+"""
 
 from getpass import getuser
 from subprocess import check_output
@@ -40,41 +41,11 @@ AIN[6] = "ain6"
 AIN_DIRECTORY = "/sys/devices/platform/omap/tsc/"
 
 
-def get_number(port, number):
-    """
-        Maps from the port and number identifier to the IO number
-        eg. 1.3 = 35
-    """
-    io = 32 * port + number
-    return io
-
-
-def check_io(io):
-    """
-        Checks that an io port has been muxed and therefore is usable
-    """
-    return io in MUX.keys()
-
-
-def check_ain(io):
-    """
-        Checks that an ADC is known about and has therefore had it perms set
-    """
-    return io in AIN.keys()
-
-
-def check_led(led):
-    """
-        Checks to make sure you aren't trying to turn on a non existent LED
-    """
-    return led in LED_FILES.keys()
-
-
 def led_off(led):
     """
         Turns one of the LEDs to the right of the RJ45 off
     """
-    if check_led(led):
+    if _check_led(led):
         try:
             filename = _led_filename(led)
             f = open(filename, "w")
@@ -90,7 +61,7 @@ def led_on(led):
     """
         Turns one of the LEDs to the right of the RJ45 on
     """
-    if check_led(led):
+    if _check_led(led):
         try:
             filename = _led_filename(led)
             f = open(filename, "w")
@@ -106,7 +77,7 @@ def on(io):
     """
         Turns on a gpio pin
     """
-    if not check_io(io):
+    if not _check_io(io):
         raise Exception("The IO isn't enabled, you should be using a different one")
     fname = _direction_filename(io)
     try:
@@ -121,7 +92,7 @@ def off(io):
     """
         Turns off a gpio pin
     """
-    if not check_io(io):
+    if not _check_io(io):
         raise Exception("The IO isn't enabled, you should be using a different one")
     fname = _direction_filename(io)
     try:
@@ -136,7 +107,7 @@ def get_ain(io):
     """
         Gets the value from and adc, converts it to an int and returns it
     """
-    if not check_ain(io):
+    if not _check_ain(io):
         raise Exception("Unknown ADC, you should be using a different number")
     fname = AIN_DIRECTORY + AIN[io]
     try:
@@ -150,7 +121,10 @@ def get_ain(io):
 
 
 def get_din(io):
-    if not check_io(io):
+    """
+        Returns the status of the digital input as a boolean
+    """
+    if not _check_io(io):
         raise Exception("The IO isn't enabled, you should be using a different one")
     fname = _value_filename(io)
     try:
@@ -166,21 +140,60 @@ def get_din(io):
 #  and so shouldn't need to be called as part of the practical
 
 
+def _get_number(port, number):
+    """
+        Maps from the port and number identifier to the IO number
+        eg. 1.3 = 35
+    """
+    io = 32 * port + number
+    return io
+
+
+def _check_io(io):
+    """
+        Checks that an io port has been muxed and therefore is usable
+    """
+    return io in MUX.keys()
+
+
+def _check_ain(io):
+    """
+        Checks that an ADC is known about and has therefore had it perms set
+    """
+    return io in AIN.keys()
+
+
+def _check_led(led):
+    """
+        Checks to make sure you aren't trying to turn on a non existent LED
+    """
+    return led in LED_FILES.keys()
+
+
 def _direction_filename(io):
+    """
+        Creates the filename for the direction file based on io number
+    """
     return GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
 
 
 def _value_filename(io):
+    """
+        Creates the filename for the value file based on io number
+    """
     return  GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILE
 
 
 def _led_filename(no):
+    """
+        Creates the filename to control the LED based on led number
+    """
     return LED_DIRECTORY + LED_FILES[no]
 
 
 def _setup_mux(io):
     """
-        Sets up the mux values as needed for the IO stuff    
+        Sets up the mux values as needed for the IO stuff
     """
     fname, mux = MUX[io]
     filename = MUX_FOLDER + fname
@@ -202,7 +215,7 @@ def _enable_io(io):
 def _install_analog_driver():
     """
         Installs the kernal module required for the analog stuff to work
-    """    
+    """
     check_output("modprobe ti_tscadc", shell=True)
 
 
@@ -215,11 +228,20 @@ def _check_root():
 
 
 def _change_ownership(filename):
+    """
+        Gives everyone write permissions on the files to save having to run as
+        root.  Could use stricter permissions but this is easiest and security
+        isn't a priority
+    """
     check_output("/bin/chmod -R 777 %s" % filename, shell=True)
     #Using an external call as it's easy to check for failure
 
 
 def _setup():
+    """
+        Setups up the muxing, enabling, kernel mod and permissions for all io
+        type operations
+    """
     if not _check_root():
         raise Exception("Not root so cannot continue")
     _install_analog_driver()
@@ -229,7 +251,7 @@ def _setup():
         sleep(0.5)
         _change_ownership(_direction_filename(io))
     _change_ownership(LED_DIRECTORY + "*")
-    led_on(2) # Turn on LED as a sign it's succeded
+    led_on(2)  # Turn on LED as a sign it's succeded
 
 
 if __name__ == "__main__":
