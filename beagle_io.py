@@ -20,7 +20,7 @@ MUX[34] = ("gpmc_ad2", 7)
 #commented out as it seems to fail at the mo :(
 MUX[38] = ("gpmc_ad6", 7)
 MUX[39] = ("gpmc_ad7", 7)
-
+MUX[45] = ("gpmc_ad13", 7)
 LED_DIRECTORY = "/sys/devices/platform/leds-gpio/leds/"
 
 LED_FILES = {}
@@ -152,11 +152,12 @@ def get_ain(io):
 def get_din(io):
     if not check_io(io):
         raise Exception("The IO isn't enabled, you should be using a different one")
-    fname = _value_filname(io)
+    fname = _value_filename(io)
     try:
         f = open(fname, "r")
-        reading = f.read()
+        reading = f.read().strip()
         f.close()
+        print "%s" % reading
         return reading == "1"
     except IOError:
         raise Exception("Unable to read ADC please contact a demonstrator")
@@ -170,7 +171,7 @@ def _direction_filename(io):
 
 
 def _value_filename(io):
-    return  GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILENAME
+    return  GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILE
 
 
 def _led_filename(no):
