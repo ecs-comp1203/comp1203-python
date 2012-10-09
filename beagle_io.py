@@ -10,6 +10,7 @@ MUX_FOLDER = "/sys/kernel/debug/omap_mux/"
 GPIO_FOLDER = "/sys/class/gpio/"
 ENABLE_FILE = "export"
 DIRECTION_FILE = "direction"
+VALUE_FILE = "value"
 
 MUX = {}
 MUX[32] = ("gpmc_ad0", 7)
@@ -38,6 +39,7 @@ AIN[5] = "ain5"
 AIN[6] = "ain6"
 AIN_DIRECTORY = "/sys/devices/platform/omap/tsc/"
 
+
 def get_number(port, number):
     """
         Maps from the port and number identifier to the IO number
@@ -46,11 +48,13 @@ def get_number(port, number):
     io = 32 * port + number
     return io
 
+
 def check_io(io):
     """
         Checks that an io port has been muxed and therefore is usable
     """
     return io in MUX.keys()
+
 
 def check_ain(io):
     """
@@ -58,11 +62,13 @@ def check_ain(io):
     """
     return io in AIN.keys()
 
+
 def check_led(led):
     """
         Checks to make sure you aren't trying to turn on a non existent LED
     """
     return led in LED_FILES.keys()
+
 
 def led_off(led):
     """
@@ -70,7 +76,7 @@ def led_off(led):
     """
     if check_led(led):
         try:
-            filename = LED_DIRECTORY + LED_FILES[led]
+            filename = _led_filename(led)
             f = open(filename, "w")
             f.write("0")
             f.close()
@@ -79,13 +85,14 @@ def led_off(led):
     else:
         raise Exception("unknown LED, are you sure you have the right number?")
 
+
 def led_on(led):
     """
         Turns one of the LEDs to the right of the RJ45 on
     """
     if check_led(led):
         try:
-            filename = LED_DIRECTORY + LED_FILES[led]
+            filename = _led_filename(led)
             f = open(filename, "w")
             f.write("1")
             f.close()
@@ -94,13 +101,14 @@ def led_on(led):
     else:
         raise Exception("unknown LED, are you sure you have the right number?")
 
+
 def on(io):
     """
         Turns on a gpio pin
     """
     if not check_io(io):
         raise Exception("The IO isn't enabled, you should be using a different one")
-    fname = GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
+    fname = _direction_filename(io)
     try:
         f = open(fname, "w")
         f.write("high")
@@ -115,7 +123,7 @@ def off(io):
     """
     if not check_io(io):
         raise Exception("The IO isn't enabled, you should be using a different one")
-    fname = GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
+    fname = _direction_filename(io)
     try:
         f = open(fname, "w")
         f.write("low")
@@ -123,7 +131,8 @@ def off(io):
     except IOError:
         raise Exception("Unable to toggle output, please contact a demonstrator")
 
-def get_adc(io):
+
+def get_ain(io):
     """
         Gets the value from and adc, converts it to an int and returns it
     """
@@ -140,8 +149,33 @@ def get_adc(io):
         raise Exception("Unable to read ADC please contact a demonstrator")
 
 
+def get_din(io):
+    if not check_io(io):
+        raise Exception("The IO isn't enabled, you should be using a different one")
+    fname = _value_filname(io)
+    try:
+        f = open(fname, "r")
+        reading = f.read()
+        f.close()
+        return reading == "1"
+    except IOError:
+        raise Exception("Unable to read ADC please contact a demonstrator")
+
 #  Functions from here on are todo with the initialisation of the system
 #  and so shouldn't need to be called as part of the practical
+
+
+def _direction_filename(io):
+    return GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
+
+
+def _value_filename(io):
+    return  GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILENAME
+
+
+def _led_filename(no):
+    return LED_DIRECTORY + LED_FILES[no]
+
 
 def _setup_mux(io):
     """
@@ -163,11 +197,13 @@ def _enable_io(io):
     f.write("%d" % io)
     f.close()
 
+
 def _install_analog_driver():
     """
         Installs the kernal module required for the analog stuff to work
     """    
     check_output("modprobe ti_tscadc", shell=True)
+
 
 def _check_root():
     """
@@ -176,6 +212,12 @@ def _check_root():
     """
     return getuser() == "root"
 
+
+def _change_ownership(filename):
+    check_output("chmod -R 777 %s" % filename)
+    #Using an external call as it's easy to check for failure
+
+
 def _setup():
     if not _check_root():
         raise Exception("Not root so cannot continue")
@@ -183,8 +225,10 @@ def _setup():
     for io in MUX:
         _setup_mux(io)
         _enable_io(io)
+        _change_ownership(_direction_filename(io))
+    _change_ownership(LED_DIRECTORY + "*")
     led_on(2) # Turn on LED as a sign it's succeded
+
 
 if __name__ == "__main__":
     _setup()
-
