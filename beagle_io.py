@@ -4,7 +4,7 @@
 
 from getpass import getuser
 from subprocess import check_output
-
+from time import sleep
 
 MUX_FOLDER = "/sys/kernel/debug/omap_mux/"
 GPIO_FOLDER = "/sys/class/gpio/"
@@ -214,7 +214,7 @@ def _check_root():
 
 
 def _change_ownership(filename):
-    check_output("chmod -R 777 %s" % filename)
+    check_output("/bin/chmod -R 777 %s" % filename, shell=True)
     #Using an external call as it's easy to check for failure
 
 
@@ -225,6 +225,7 @@ def _setup():
     for io in MUX:
         _setup_mux(io)
         _enable_io(io)
+        sleep(0.5)
         _change_ownership(_direction_filename(io))
     _change_ownership(LED_DIRECTORY + "*")
     led_on(2) # Turn on LED as a sign it's succeded
