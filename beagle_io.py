@@ -7,38 +7,40 @@ from getpass import getuser
 from subprocess import check_output
 from time import sleep
 
-MUX_FOLDER = "/sys/kernel/debug/omap_mux/"
-GPIO_FOLDER = "/sys/class/gpio/"
-ENABLE_FILE = "export"
-DIRECTION_FILE = "direction"
-VALUE_FILE = "value"
+__MUX_FOLDER = "/sys/kernel/debug/omap_mux/"
+_GPIO_FOLDER = "/sys/class/gpio/"
+_ENABLE_FILE = "export"
+_DIRECTION_FILE = "direction"
+_VALUE_FILE = "value"
 
-MUX = {}
-MUX[32] = ("gpmc_ad0", 7)
-MUX[33] = ("gpmc_ad1", 7)
-MUX[34] = ("gpmc_ad2", 7)
-#MUX[35] =("gpmc_ad3", 7)
+_MUX = {}
+_MUX[32] = ("gpmc_ad0", 7)
+_MUX[33] = ("gpmc_ad1", 7)
+_MUX[34] = ("gpmc_ad2", 7)
+#_MUX[35] =("gpmc_ad3", 7)
 #commented out as it seems to fail at the mo :(
-MUX[38] = ("gpmc_ad6", 7)
-MUX[39] = ("gpmc_ad7", 7)
-MUX[45] = ("gpmc_ad13", 7)
-LED_DIRECTORY = "/sys/devices/platform/leds-gpio/leds/"
+_MUX[38] = ("gpmc_ad6", 7)
+_MUX[39] = ("gpmc_ad7", 7)
+_MUX[45] = ("gpmc_ad13", 7)
 
-LED_FILES = {}
-#LED_FILES[0] = "beaglebone\:\:usr0/brightness"
+
+_LED_DIRECTORY = "/sys/devices/platform/leds-gpio/leds/"
+
+_LED_FILES = {}
+#_LED_FILES[0] = "beaglebone\:\:usr0/brightness"
 # Don't use LED 0 as it's used by other parts of the OS
-LED_FILES[1] = "beaglebone::usr1/brightness"
-LED_FILES[2] = "beaglebone::usr2/brightness"
-LED_FILES[3] = "beaglebone::usr3/brightness"
+_LED_FILES[1] = "beaglebone::usr1/brightness"
+_LED_FILES[2] = "beaglebone::usr2/brightness"
+_LED_FILES[3] = "beaglebone::usr3/brightness"
 
-AIN = {}
-AIN[1] = "ain1"
-AIN[2] = "ain2"
-AIN[3] = "ain3"
-AIN[4] = "ain4"
-AIN[5] = "ain5"
-AIN[6] = "ain6"
-AIN_DIRECTORY = "/sys/devices/platform/omap/tsc/"
+_AIN = {}
+_AIN[1] = "ain1"
+_AIN[2] = "ain2"
+_AIN[3] = "ain3"
+_AIN[4] = "ain4"
+_AIN[5] = "ain5"
+_AIN[6] = "ain6"
+_AIN_DIRECTORY = "/sys/devices/platform/omap/tsc/"
 
 
 def led_off(led):
@@ -109,7 +111,7 @@ def get_ain(io):
     """
     if not _check_ain(io):
         raise Exception("Unknown ADC, you should be using a different number")
-    fname = AIN_DIRECTORY + AIN[io]
+    fname = _AIN_DIRECTORY + _AIN[io]
     try:
         f = open(fname, "r")
         reading = f.read()
@@ -153,50 +155,50 @@ def _check_io(io):
     """
         Checks that an io port has been muxed and therefore is usable
     """
-    return io in MUX.keys()
+    return io in _MUX.keys()
 
 
 def _check_ain(io):
     """
         Checks that an ADC is known about and has therefore had it perms set
     """
-    return io in AIN.keys()
+    return io in _AIN.keys()
 
 
 def _check_led(led):
     """
         Checks to make sure you aren't trying to turn on a non existent LED
     """
-    return led in LED_FILES.keys()
+    return led in _LED_FILES.keys()
 
 
 def _direction_filename(io):
     """
         Creates the filename for the direction file based on io number
     """
-    return GPIO_FOLDER + "gpio%d" % io + "/" + DIRECTION_FILE
+    return _GPIO_FOLDER + "gpio%d" % io + "/" + _DIRECTION_FILE
 
 
 def _value_filename(io):
     """
         Creates the filename for the value file based on io number
     """
-    return  GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILE
+    return  _GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILE
 
 
 def _led_filename(no):
     """
         Creates the filename to control the LED based on led number
     """
-    return LED_DIRECTORY + LED_FILES[no]
+    return _LED_DIRECTORY + _LED_FILES[no]
 
 
 def _setup_mux(io):
     """
         Sets up the mux values as needed for the IO stuff
     """
-    fname, mux = MUX[io]
-    filename = MUX_FOLDER + fname
+    fname, mux = _MUX[io]
+    filename = __MUX_FOLDER + fname
     f = open(filename, "w")
     f.write("%d" % mux)
     f.close()
@@ -206,7 +208,7 @@ def _enable_io(io):
     """
         Enables the driver for a specific IO
     """
-    fname = GPIO_FOLDER + ENABLE_FILE
+    fname = _GPIO_FOLDER + _ENABLE_FILE
     f = open(fname, "w")
     f.write("%d" % io)
     f.close()
@@ -245,12 +247,12 @@ def _setup():
     if not _check_root():
         raise Exception("Not root so cannot continue")
     _install_analog_driver()
-    for io in MUX:
+    for io in _MUX:
         _setup_mux(io)
         _enable_io(io)
         sleep(0.5)
         _change_ownership(_direction_filename(io))
-    _change_ownership(LED_DIRECTORY + "*")
+    _change_ownership(_LED_DIRECTORY + "*")
     led_on(2)  # Turn on LED as a sign it's succeded
 
 
