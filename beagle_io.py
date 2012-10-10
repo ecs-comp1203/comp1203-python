@@ -21,6 +21,7 @@ _MUX[34] = ("gpmc_ad2", 7)
 #commented out as it seems to fail at the mo :(
 _MUX[38] = ("gpmc_ad6", 7)
 _MUX[39] = ("gpmc_ad7", 7)
+_MUX[44] = ("gpmc_ad12", 7)
 _MUX[45] = ("gpmc_ad13", 7)
 
 
@@ -133,7 +134,6 @@ def get_din(io):
         f = open(fname, "r")
         reading = f.read().strip()
         f.close()
-        print "%s" % reading
         return reading == "1"
     except IOError:
         raise Exception("Unable to read ADC please contact a demonstrator")
@@ -183,7 +183,7 @@ def _value_filename(io):
     """
         Creates the filename for the value file based on io number
     """
-    return  _GPIO_FOLDER + "gpio%d" % io + "/" + VALUE_FILE
+    return  _GPIO_FOLDER + "gpio%d" % io + "/" + _VALUE_FILE
 
 
 def _led_filename(no):
