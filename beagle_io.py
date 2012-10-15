@@ -23,6 +23,8 @@ _MUX[38] = ("gpmc_ad6", 7)
 _MUX[39] = ("gpmc_ad7", 7)
 _MUX[44] = ("gpmc_ad12", 7)
 _MUX[45] = ("gpmc_ad13", 7)
+_MUX[70] = ("lcd_data0", 27)
+_MUX[71] = ("lcd_data1", 27)
 
 
 _LED_DIRECTORY = "/sys/devices/platform/leds-gpio/leds/"
