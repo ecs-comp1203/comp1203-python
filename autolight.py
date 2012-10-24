@@ -4,7 +4,7 @@
 import beagle_io
 from time import sleep
 
-# turn on the light if its dark
+# turn off the light if its dark
 while True:
     adc =  beagle_io.get_ain(1)
     if adc > 3000 :
