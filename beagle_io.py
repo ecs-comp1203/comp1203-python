@@ -240,6 +240,18 @@ def _change_ownership(filename):
     check_output("/bin/chmod -R 777 %s" % filename, shell=True)
     #Using an external call as it's easy to check for failure
 
+def _setup_serials():
+    """
+        Muxes the serial ports into existence
+    """
+    check_output("echo 0 > /sys/kernel/debug/omap_mux/uart1_txd", shell=True)
+    check_output("echo 20 > /sys/kernel/debug/omap_mux/uart1_rxd", shell=True)
+    check_output("echo 1 > /sys/kernel/debug/omap_mux/spi0_d0", shell=True)
+    check_output("echo 21 > /sys/kernel/debug/omap_mux/spi0_sclk", shell=True)
+    check_output("echo 06 > /sys/kernel/debug/omap_mux/gpmc_wpn", shell=True)
+    check_output("echo 26 > /sys/kernel/debug/omap_mux/gpmc_wait0", shell=True)
+    check_output("echo 4 >  /sys/kernel/debug/omap_mux/lcd_data8", shell=True)
+    check_output("echo 24 >  /sys/kernel/debug/omap_mux/lcd_data9", shell=True)
 
 def _setup():
     """
@@ -255,6 +267,7 @@ def _setup():
         sleep(0.5)
         _change_ownership(_direction_filename(io))
     _change_ownership(_LED_DIRECTORY + "*")
+    _setup_serials()
     led_on(2)  # Turn on LED as a sign it's succeded
 
 
