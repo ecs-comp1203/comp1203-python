@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from bottle import route, run
 import beagle_io                                                             
 from time import sleep                                                          

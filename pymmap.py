@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from mmap import mmap
 import time, struct
 
