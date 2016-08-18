@@ -6,27 +6,28 @@
 # GPIO1_2 (not used)
 # calculate the number by 32* n + m, so 1_2 is 32+2
 
-import beagle_io
+import rpi_io
 from time import sleep
 
-RED = 38
-GREEN = 39
-BLUE = 34
+RED = 13
+BLUE = 19
+GREEN = 26
 ontime = 0.3
+
 try:
     while True:
-        beagle_io.on(RED)
+        rpi_io.on(RED)
         sleep(ontime)
-        beagle_io.off(RED)
-        beagle_io.on(GREEN)
+        rpi_io.off(RED)
+        rpi_io.on(BLUE)
         sleep(ontime)
-        beagle_io.off(GREEN)
-        beagle_io.on(BLUE)
+        rpi_io.off(BLUE)
+        rpi_io.on(GREEN)
         sleep(ontime)
-        beagle_io.off(BLUE)
+        rpi_io.off(GREEN)
 
 # this catches when you stop the program
 except KeyboardInterrupt:
-    beagle_io.off(34)
-    beagle_io.off(38)
-    beagle_io.off(39)
+    rpi_io.off(RED)
+    rpi_io.off(BLUE)
+    rpi_io.off(GREEN)

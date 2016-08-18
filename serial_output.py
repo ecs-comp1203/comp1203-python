@@ -4,7 +4,7 @@ from serial import Serial
 from time import sleep
 
 DEFAULT_STRING = "AAA"
-PORT = "/dev/ttyO5"
+PORT = "/dev/serial0"
 
 
 try:

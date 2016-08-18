@@ -1,10 +1,10 @@
 #!/usr/bin/env python  
 # print an adc value
 # getAdc(2) is pin...
-import beagle_io
+import rpi_io
 from time import sleep
 
 
 while True:
-    print beagle_io.get_ain(1)
+    print rpi_io.get_ain(0)
     sleep(0.3)

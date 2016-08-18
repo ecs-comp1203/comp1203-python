@@ -7,17 +7,19 @@
 # GPIO1_2 (not used)
 # switch uses port gpio2_7
 
-import beagle_io
+import rpi_io
 from time import sleep
-
+SWITCH = 21
+LED = 13
+rpi_io.set_input(SWITCH)
 try:
     while True:
-        sw = beagle_io.get_din(71)
+        sw = rpi_io.get_din(SWITCH)
         if sw :
-            beagle_io.on(38)
+            rpi_io.on(LED)
         else:
-            beagle_io.off(38)
+            rpi_io.off(LED)
 
 # this catches when you stop the program
 except KeyboardInterrupt:
-    beagle_io.off(38)
+    rpi_io.off(LED)
