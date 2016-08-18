@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import rpi_io
 import os
 from time import sleep
-PID = os.getpid()
-os.sched_setaffinity(PID, {0})
 delay = 0.1
 LED = 13
 try:

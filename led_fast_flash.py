@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import rpi_io
 import os
 LED = 13
-PID = os.getpid()
-os.sched_setaffinity(PID, {0})
 try:
     while True:
         rpi_io.on(LED)
