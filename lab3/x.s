@@ -1,4 +1,4 @@
-@@@ file x.s - COMP1203 2012/13 Lab3 @@@@@@@@@@@@
+@@@ file x.s - COMP1203 2016/17 Lab3 @@@@@@@@@@@@
 	.syntax unified
         .align  2
         .global x
