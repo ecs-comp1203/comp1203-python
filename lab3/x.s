@@ -1,6 +1,7 @@
 @@@ file x.s - COMP1203 2016/17 Lab3 @@@@@@@@@@@@
 	.syntax unified
         .align  2
+	.arch armv8-a
         .global x
         .type   x, %function
 x:
