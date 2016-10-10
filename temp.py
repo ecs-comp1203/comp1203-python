@@ -1,7 +1,7 @@
 #!/usr/bin/env python  
 #
 # use thermistor+8k2ohm on adc, when warm light up red LED, else green
-# ain(0) is pin 1 of the MCP3008 ...
+# ain(1) is pin 2 of the MCP3008 ...
 # threshold has to be chosen by experiment
 
 import rpi_io
@@ -12,7 +12,7 @@ GREEN = 26
 
 try:
     while True:
-        t =  rpi_io.get_ain(0)
+        t =  rpi_io.get_ain(1)
         print t
         if t > 800 :
             rpi_io.off(RED)
