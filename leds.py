@@ -1,16 +1,15 @@
 #!/usr/bin/env python
+#
 # flash LEDs in sequence
-# uses header P8
-# GND     GND
-# GPIO1_6 GPIO1_7
-# GPIO1_2 (not used)
-# calculate the number by 32* n + m, so 1_2 is 32+2
+# Red = GPIO 13
+# Orange/Blue = GPIO 19
+# Green = GPIO 26 
 
 import rpi_io
 from time import sleep
 
 RED = 13
-BLUE = 19
+ORANGE = 19
 GREEN = 26
 ontime = 0.3
 
@@ -19,9 +18,9 @@ try:
         rpi_io.on(RED)
         sleep(ontime)
         rpi_io.off(RED)
-        rpi_io.on(BLUE)
+        rpi_io.on(ORANGE)
         sleep(ontime)
-        rpi_io.off(BLUE)
+        rpi_io.off(ORANGE)
         rpi_io.on(GREEN)
         sleep(ontime)
         rpi_io.off(GREEN)
@@ -29,5 +28,5 @@ try:
 # this catches when you stop the program
 except KeyboardInterrupt:
     rpi_io.off(RED)
-    rpi_io.off(BLUE)
+    rpi_io.off(ORANGE)
     rpi_io.off(GREEN)

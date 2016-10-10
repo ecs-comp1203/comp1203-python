@@ -1,6 +1,8 @@
 #!/usr/bin/env python  
+#
 # print an adc value
-# getAdc(2) is pin...
+# get_ain(0) is pin...
+
 import rpi_io
 from time import sleep
 
