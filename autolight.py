@@ -7,7 +7,7 @@ LED = 13
 # turn off the light if its dark
 while True:
     adc =  rpi_io.get_ain(0)
-    if adc > 800 :
+    if adc < 800 :
         rpi_io.on(LED)                                                 
     else :
         rpi_io.off(LED)
