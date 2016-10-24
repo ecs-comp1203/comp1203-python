@@ -5,7 +5,7 @@ from time import sleep
 
 DEFAULT_STRING = "AAA"
 PORT = "/dev/serial0"
-
+BAUD = 9600
 
 try:
     if len(argv) == 2:
@@ -14,7 +14,7 @@ try:
     else:
         outstr = DEFAULT_STRING
     print "Outputing %s" % outstr
-    SERIAL_PORT = Serial(PORT, 9600, timeout=0.1)
+    SERIAL_PORT = Serial(PORT, BAUD, timeout=0.1)
     while True:
         SERIAL_PORT.write(outstr)
         sleep(0.5)
