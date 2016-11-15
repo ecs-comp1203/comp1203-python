@@ -1,4 +1,6 @@
 @@@@@@@@ file m.s - COMP1203 2016/17 lab3 @@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@ This "main" file wraps up a simple call to printf for your code
+@@ which is kept in a separate file and compiled with this one
 	.syntax unified
         .arch armv8-a
         .eabi_attribute 27, 3
