@@ -10,7 +10,7 @@ x:
 @@@ at end of function, result must be in r0  @@@
 @@@ start user-defined assembly language code @@@
 
-        add     r0, r0, #5                         @@@ - "line 12"
+        add     r0, r0, #5                         @@@ - "line 13"
 
 @@@ end user-defined assembly language code   @@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
