@@ -1,7 +1,7 @@
 #!/usr/bin/env python  
 #
 # print an adc value
-# get_ain(0) is pin...
+# get_ain(chanum) where chanum 0 for CH0 on MCP3008 etc
 
 import rpi_io
 from time import sleep
