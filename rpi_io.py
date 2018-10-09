@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-    Provides an easy to use python interface to all the beagle io/adc stuff
+    Provides an easy to use python interface to all the io/adc stuff
 """
 
 from getpass import getuser
@@ -79,7 +79,7 @@ def off(io):
 
 
 
-# read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
+# read SPI data from MCP3008 ADC chip, 8 channels (adcnum 0 to 7)
 def get_ain(adcnum):
         if ((adcnum > 7) or (adcnum < 0)):
                 return -1
@@ -196,7 +196,7 @@ def _change_ownership(filename):
 
 def setup():
     """
-        Setups up the muxing, enabling, kernel mod and permissions for all io
+        Sets up up the muxing, enabling, kernel mod and permissions for all io
         type operations
     """
     for io in _BERRYCLIP:
