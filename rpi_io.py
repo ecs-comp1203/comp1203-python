@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
     Provides an easy to use python interface to all the io/adc stuff
+    Assumes Raspberry Pi with MCP3008 ADC
+    By Ed Crampin
 """
 
 from getpass import getuser
