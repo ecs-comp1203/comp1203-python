@@ -3,7 +3,8 @@ from bottle import route, run
 import rpi_io                                                             
 from time import sleep                                                          
 #this sets up a web server on port 8080. 
-# Access it with a web browser at http://10.0.0.50:8080/       
+# Access it with a web browser at http://YourPiIP:8080
+# or on the Pi's web browser at http://localhost:8080
 LED = 13                                                                    
 # this sets up the url /hello/name which prints "Hello name" if requested
 @route('/hello/:name')
