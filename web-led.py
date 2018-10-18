@@ -28,6 +28,6 @@ def index(name='ledon'):
 # thus makes a url /adc which returns the adc reading
 @route('/adc')
 def index(name='adc'):
-    return '<p> %s</p>' % rpi_io.get_ain(0)
+    return '<p> %s</p>' % adc.get_ain(0)
 
 run(host='0.0.0.0', port=8080)
