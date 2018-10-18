@@ -19,7 +19,7 @@ GPIO.setup(GREEN, GPIO.OUT)
 
 try:
     while True:
-        t = adc.get_ain(0)
+        t = adc.get_ain(1)
 
         print t
         if t > 800 :
