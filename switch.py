@@ -6,19 +6,24 @@
 # Swithc = GPIO 21
 # LED = GPIO 13
 
-import rpi_io
+import RPi.GPIO as GPIO
 from time import sleep
 SWITCH = 21
 LED = 13
-rpi_io.set_input(SWITCH)
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED, GPIO.OUT)
+GPIO.setup(SWITCH, GPIO.IN)
+
+
 try:
     while True:
-        sw = rpi_io.get_din(SWITCH)
+        sw = GPIO.input(SWITCH)
         if sw :
-            rpi_io.on(LED)
+            GPIO.output(LED, GPIO.HIGH)
         else:
-            rpi_io.off(LED)
+            GPIO.output(LED, GPIO.LOW)
 
 # this catches when you stop the program
 except KeyboardInterrupt:
-    rpi_io.off(LED)
+    GPIO.cleanup()

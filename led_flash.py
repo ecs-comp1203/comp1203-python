@@ -1,14 +1,20 @@
 #!/usr/bin/env python
-import rpi_io
+import RPi.GPIO as GPIO
 import os
 from time import sleep
+
 delay = 0.1
 LED = 13
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED, GPIO.OUT)
+
 try:
     while True:
-        rpi_io.on(LED)
+        GPIO.output(LED,GPIO.HIGH)
         sleep(delay)
-        rpi_io.off(LED)
+        GPIO.output(LED,GPIO.LOW)
         sleep(delay)
+        
 except KeyboardInterrupt:
-    rpi_io.off(LED)
+    GPIO.cleanup()
