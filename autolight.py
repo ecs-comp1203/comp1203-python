@@ -15,5 +15,5 @@ while True:
     if adc < 800 :
         GPIO.output(LED,GPIO.HIGH)
     else :
-        GPIO.output(LED,GPIO.GPIO.LOW)
+        GPIO.output(LED,GPIO.LOW)
     sleep(0.3)
