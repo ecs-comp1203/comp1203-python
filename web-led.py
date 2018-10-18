@@ -11,6 +11,7 @@ LED = 13
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(LED, GPIO.OUT)
+GPIO.output(LED, GPIO.LOW)
 
 # this sets up the url /hello/name which prints "Hello name" if requested
 @route('/hello/:name')
