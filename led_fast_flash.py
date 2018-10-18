@@ -1,11 +1,17 @@
 #!/usr/bin/env python
-import rpi_io
+import RPi.GPIO as GPIO
 import os
+
 LED = 13
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED, GPIO.OUT)
+
 try:
     while True:
-        rpi_io.on(LED)
-        rpi_io.off(LED)
+        GPIO.output(LED,GPIO.HIGH)
+        GPIO.output(LED,GPIO.LOW)
+
 except KeyboardInterrupt:
-    rpi_io.off(LED)
+    GPIO.cleanup()
 
