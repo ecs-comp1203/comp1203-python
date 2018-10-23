@@ -1,7 +1,9 @@
 """
     Provides an easy to use python interface to all the adc stuff
     Assumes Raspberry Pi with MCP3008 ADC
-    By Laurie Kirkcaldy
+    originally adapted by Ed Crampin from https://pimylifeup.com/raspberry-pi-adc/
+    2018 adaption By Laurie Kirkcaldy
+    principle is the ADC channel  number is sent and the two bytes of reading received and decoded
 """
 
 import spidev
@@ -18,4 +20,3 @@ def get_ain(adcnum):
         data = ((r[1]&3) << 8) + r[2]
         return data
         
-
