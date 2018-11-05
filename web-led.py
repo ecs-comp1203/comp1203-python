@@ -39,7 +39,7 @@ def index(name='ledon'):
 def index(name='adc'):
     return '<p> %s</p>' % adc.get_ain(0)
 
-@route(#cputemp')
+@route('cputemp')
 def index(name='cputemp'):
     temp = os.popen(("vcgencmd measure_temp").readline()
     return(temp)
