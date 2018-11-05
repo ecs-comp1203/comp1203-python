@@ -11,7 +11,7 @@ import os
 # Access it with a web browser at http://YourPiIP:8080
 # or on the Pi's web browser at http://localhost:8080
 # makes these resources:
-# /ledon  - flashes red led
+# /ledflash  - flashes red led
 # /hello  - says hello world and arg if given like /hello/kirk
 # /adc    - adc reading of channel 0
 # /cputemp - temperature of CPU
@@ -28,8 +28,8 @@ def index(name='World'):
     return '<b>Hello %s!</b>' % name
 
 # this defines a URL which flashes the LED once
-@route('/ledon')
-def index(name='ledon'):
+@route('/ledflash')
+def index(name='ledflash'):
     GPIO.output(LED, GPIO.HIGH)                                                   
     sleep(0.5)                                                             
     GPIO.output(LED, GPIO.LOW)                                                   
