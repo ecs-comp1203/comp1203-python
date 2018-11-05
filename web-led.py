@@ -41,7 +41,7 @@ def index(name='adc'):
 
 @route('/cputemp')
 def index(name='cputemp'):
-    temp = os.popen(("vcgencmd measure_temp").readline()
+    temp = os.popen("vcgencmd measure_temp").readline()
     return(temp)
 
 run(host='0.0.0.0', port=8080)
