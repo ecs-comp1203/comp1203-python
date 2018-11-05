@@ -1,12 +1,20 @@
 #!/usr/bin/env python
+# simple web server on a Pi demo for comp1203
+# requires Bottle
 from bottle import route, run
 import RPi.GPIO as GPIO
 from time import sleep
 import adc
+import os
 
-#this sets up a web server on port 8080. 
+# this sets up a web server on port 8080. 
 # Access it with a web browser at http://YourPiIP:8080
 # or on the Pi's web browser at http://localhost:8080
+# makes these resources:
+# /ledon  - flashes red led
+# /hello  - says hello world and arg if given like /hello/kirk
+# /adc    - adc reading of channel 0
+# /cputemp - temperature of CPU
 LED = 13
 
 GPIO.setmode(GPIO.BCM)
@@ -30,5 +38,10 @@ def index(name='ledon'):
 @route('/adc')
 def index(name='adc'):
     return '<p> %s</p>' % adc.get_ain(0)
+
+@route(#cputemp')
+def index(name='cputemp'):
+    temp = popen(("vcgencmd measure_temp").readline()
+    return(temp)
 
 run(host='0.0.0.0', port=8080)
