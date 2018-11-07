@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # rapidly toggles a GPIO on/off
-# pass it the pin number you want to toggle (13 19 26)
+# arg: the pin number you want to toggle (13 19 26)
+# Kirk Martinez 2018
 from sys import argv
 import RPi.GPIO as GPIO
 import os
